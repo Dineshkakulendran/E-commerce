@@ -91,7 +91,7 @@ const AddProduct = () => {
   //ADDING WITH BACKEND END CODE 
 
   return (
-    <div className='add-product'>
+    <div data-testid="cypress-title" className='add-product'>
 
       <div className="addproduct-itemfield">
         <p>Product title</p>

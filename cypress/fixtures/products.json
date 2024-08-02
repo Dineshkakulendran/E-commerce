@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "name": "Product 1",
+    "old_price": "100",
+    "new_price": "80",
+    "category": "men",
+    "image": "../fixtures/product_28.png"
+  }
+]

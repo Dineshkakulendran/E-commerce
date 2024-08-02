@@ -312,7 +312,7 @@ const fetchUser = (req, res, next) => {
 
 
 
-//9)creating endpoint for adding products in cartdata
+/*//9)creating endpoint for adding products in cartdata
 app.post('/addtocart', fetchUser, async(req, res)=>{
   /*
   console.log(req.body, req.user); 
@@ -320,15 +320,15 @@ app.post('/addtocart', fetchUser, async(req, res)=>{
     success: true,
     user: req.user,
     itemId: req.body.itemId,
-    */
+    //
     console.log("added", req.body.itemId);
     let userData = await Users.findOne({_id:req.user.id});
     userData.cartData[req.body.itemId] += 1;
     await Users.findOneAndUpdate({_id:req.user.id}, {cartData:userData.cartData});
     res.send("Added")
-});
+});*/
 
-
+/*
 // 10) creating endpoint to remove product from cart data
 app.post('/removefromcart', fetchUser, async (req, res) => {
   console.log("removed", req.body.itemId);
@@ -338,12 +338,65 @@ app.post('/removefromcart', fetchUser, async (req, res) => {
   userData.cartData[req.body.itemId] -= 1
   await Users.findOneAndUpdate({_id: req.user.id}, {cartData: userData.cartData});
   res.send("Removed")
-})
+})*/
+
+//9) creating endpoint for adding products in cartdata
+app.post('/addtocart', fetchUser, async (req, res) => {
+  console.log("added", req.body.itemId);
+  try {
+    let userData = await Users.findOne({_id: req.user.id});
+    if (!userData) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    userData.cartData[req.body.itemId] += 1;
+    await Users.findOneAndUpdate({_id: req.user.id}, {cartData: userData.cartData});
+    res.send("Added");
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// 10) creating endpoint to remove product from cart data
+app.post('/removefromcart', fetchUser, async (req, res) => {
+  console.log("removed", req.body.itemId);
+  try {
+    let userData = await Users.findOne({_id: req.user.id});
+    if (!userData) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    if (userData.cartData[req.body.itemId] > 0) {
+      userData.cartData[req.body.itemId] -= 1;
+    }
+    await Users.findOneAndUpdate({_id: req.user.id}, {cartData: userData.cartData});
+    res.send("Removed");
+  } catch (error) {
+    console.error("Error removing from cart:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 
 
+/*
 //11) creating endpoint to get cartdata After login we can see the previous thing that we added  
 app.post('/getcart', fetchUser , async (req, res)=> {
   console.log("GetCart");
   let userData = await Users.findOne({_id:req.user.id});
   res.json(userData.cartData);
 })
+  */
+
+//11) creating endpoint to get cartdata After login we can see the previous thing that we added  
+app.post('/getcart', fetchUser, async (req, res) => {
+  console.log("GetCart");
+  try {
+    let userData = await Users.findOne({_id: req.user.id});
+    if (!userData) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    res.json(userData.cartData);
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
